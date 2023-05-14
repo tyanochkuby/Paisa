@@ -14,6 +14,7 @@ class AccountModel extends HiveObject with EquatableMixin {
     required this.bankName,
     required this.number,
     required this.cardType,
+    required this.currency,
     this.superId,
     required this.amount,
   });
@@ -24,8 +25,10 @@ class AccountModel extends HiveObject with EquatableMixin {
       icon: json["icon"],
       number: json["number"],
       cardType: (json["cardType"] as String).type,
+      currency: json["currency"],
       amount: json["amount"])
     ..superId = json["superId"];
+
 
   @HiveField(8, defaultValue: 0)
   double? amount;
@@ -45,6 +48,9 @@ class AccountModel extends HiveObject with EquatableMixin {
   @HiveField(5)
   String number;
 
+  @HiveField(4)
+  String currency;
+
   @HiveField(7, defaultValue: 0)
   int? superId;
 
@@ -55,24 +61,27 @@ class AccountModel extends HiveObject with EquatableMixin {
       icon,
       bankName,
       number,
+      currency,
     ];
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'bankName': bankName,
-        'icon': icon,
-        'number': number,
-        'cardType': cardType?.name,
-        'superId': superId,
-        'amount': amount,
-      };
+    'name': name,
+    'bankName': bankName,
+    'icon': icon,
+    'number': number,
+    'cardType': cardType?.name,
+    'currency': currency,
+    'superId': superId,
+    'amount': amount,
+  };
 
   AccountModel copyWith({
     String? name,
     int? icon,
     String? bankName,
     String? number,
+    String? currency,
     CardType? cardType,
     int? superId,
     double? amount,
@@ -82,6 +91,7 @@ class AccountModel extends HiveObject with EquatableMixin {
       icon: icon ?? this.icon,
       bankName: bankName ?? this.bankName,
       number: number ?? this.number,
+      currency: currency ?? this.currency,
       cardType: cardType ?? this.cardType,
       superId: superId ?? this.superId,
       amount: amount ?? this.amount,

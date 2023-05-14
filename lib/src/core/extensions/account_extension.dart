@@ -8,14 +8,15 @@ extension AccountModelMapping on AccountModel {
   double get initialAmount => amount ?? 0;
 
   Account toEntity() => Account(
-        amount: amount,
-        bankName: bankName,
-        cardType: cardType,
-        icon: icon,
-        name: name,
-        number: number,
-        superId: superId,
-      );
+    amount: amount,
+    bankName: bankName,
+    cardType: cardType,
+    currency: currency,
+    icon: icon,
+    name: name,
+    number: number,
+    superId: superId,
+  );
 }
 
 extension AccountModelsMapping on Iterable<AccountModel> {

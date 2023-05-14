@@ -17,6 +17,7 @@ class UpdateAccountUseCase {
       number: account.number,
       cardType: account.cardType ?? CardType.bank,
       amount: account.amount ?? 0.0,
+      currency: account.currency ?? 'USD',
       key: account.superId!,
     );
   }

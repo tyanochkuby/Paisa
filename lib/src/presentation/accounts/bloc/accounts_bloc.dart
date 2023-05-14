@@ -4,6 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart' show immutable;
+import 'package:paisa/src/core/common.dart';
+import 'package:paisa/src/data/currencies/models/currency_model.dart';
 
 import '../../../core/enum/card_type.dart';
 import '../../../data/category/model/category_model.dart';
@@ -27,6 +29,7 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
     required this.getCategoryUseCase,
     required this.deleteExpensesFromAccountIdUseCase,
     required this.updateAccountUseCase,
+    //required this.getCurrencyUseCase,
   }) : super(AccountsInitial()) {
     on<AccountsEvent>((event, emit) {});
     on<AddOrUpdateAccountEvent>(_addAccount);
@@ -51,11 +54,12 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
   String? accountNumber;
   Account? currentAccount;
   double? initialAmount;
+  String? currency;
 
   Future<void> _fetchAccountFromId(
-    FetchAccountFromIdEvent event,
-    Emitter<AccountsState> emit,
-  ) async {
+      FetchAccountFromIdEvent event,
+      Emitter<AccountsState> emit,
+      ) async {
     final int? accountId = int.tryParse(event.accountId ?? '');
     if (accountId == null) return;
 
@@ -66,6 +70,7 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
       accountNumber = account.number;
       selectedType = account.cardType ?? CardType.cash;
       initialAmount = account.amount;
+      currency = account.currency;
       currentAccount = account;
       emit(AccountSuccessState(account));
       emit(UpdateCardTypeState(selectedType));
@@ -75,14 +80,15 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
   }
 
   Future<void> _addAccount(
-    AddOrUpdateAccountEvent event,
-    Emitter<AccountsState> emit,
-  ) async {
+      AddOrUpdateAccountEvent event,
+      Emitter<AccountsState> emit,
+      ) async {
     final String? bankName = accountName;
     final String? holderName = accountHolderName;
     final String? number = accountNumber;
     final CardType cardType = selectedType;
     final double? amount = initialAmount;
+    final String? currency = this.currency;
 
     if (bankName == null) {
       return emit(const AccountErrorState('Set bank name'));
@@ -96,6 +102,7 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
         bankName: bankName,
         holderName: holderName,
         number: number ?? '',
+        currency: currency ?? 'USD',
         cardType: cardType,
         amount: amount ?? 0,
       );
@@ -107,7 +114,8 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
           ..icon = cardType.icon.codePoint
           ..name = holderName
           ..number = number ?? ''
-          ..amount = amount;
+          ..amount = amount
+          ..currency = currency ?? 'USD';
 
         await updateAccountUseCase(account: currentAccount!);
       }
@@ -116,27 +124,37 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
   }
 
   FutureOr<void> _deleteAccount(
-    DeleteAccountEvent event,
-    Emitter<AccountsState> emit,
-  ) async {
+      DeleteAccountEvent event,
+      Emitter<AccountsState> emit,
+      ) async {
     await deleteExpensesFromAccountIdUseCase(event.accountId);
     await deleteAccountUseCase(event.accountId);
     emit(AccountDeletedState());
   }
 
   FutureOr<void> _accountSelected(
-    AccountSelectedEvent event,
-    Emitter<AccountsState> emit,
-  ) async =>
+      AccountSelectedEvent event,
+      Emitter<AccountsState> emit,
+      ) async =>
       emit(AccountSelectedState(event.account));
 
   FutureOr<void> _updateCardType(
-    UpdateCardTypeEvent event,
-    Emitter<AccountsState> emit,
-  ) async {
+      UpdateCardTypeEvent event,
+      Emitter<AccountsState> emit,
+      ) async {
     selectedType = event.cardType;
     emit(UpdateCardTypeState(event.cardType));
   }
+
+  FutureOr<void> _updateCurrency(
+      UpdateCurrencyEvent event,
+      Emitter<AccountsState> emit,
+      ) async {
+    currency = event.currency;
+    emit(UpdateCurrencyState(event.currency));
+  }
+
+
 
   CategoryModel? fetchCategoryFromId(int categoryId) =>
       getCategoryUseCase(categoryId);

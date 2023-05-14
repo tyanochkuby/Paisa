@@ -46,3 +46,12 @@ class UpdateCardTypeEvent extends AccountsEvent {
   @override
   List<Object> get props => [cardType];
 }
+
+class UpdateCurrencyEvent extends AccountsEvent {
+  final String currency;
+
+  const UpdateCurrencyEvent(this.currency);
+
+  @override
+  List<Object> get props => [currency];
+}

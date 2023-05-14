@@ -20,6 +20,7 @@ class AccountModelAdapter extends TypeAdapter<AccountModel> {
       name: fields[0] as String,
       icon: fields[1] as int,
       bankName: fields[3] as String,
+      currency: fields[4] as String,
       number: fields[5] as String,
       cardType: fields[6] == null ? CardType.bank : fields[6] as CardType?,
       superId: fields[7] == null ? 0 : fields[7] as int?,
@@ -35,6 +36,8 @@ class AccountModelAdapter extends TypeAdapter<AccountModel> {
       ..write(obj.amount)
       ..writeByte(3)
       ..write(obj.bankName)
+      ..writeByte(4)
+      ..write(obj.currency)
       ..writeByte(6)
       ..write(obj.cardType)
       ..writeByte(1)
@@ -53,7 +56,7 @@ class AccountModelAdapter extends TypeAdapter<AccountModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AccountModelAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+          other is AccountModelAdapter &&
+              runtimeType == other.runtimeType &&
+              typeId == other.typeId;
 }

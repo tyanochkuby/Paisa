@@ -64,3 +64,12 @@ class UpdateCardTypeState extends AccountsState {
   @override
   List<Object> get props => [cardType];
 }
+
+class UpdateCurrencyState extends AccountsState {
+  final String currency;
+
+  const UpdateCurrencyState(this.currency);
+
+  @override
+  List<Object> get props => [currency];
+}
